@@ -2,11 +2,13 @@
 #include <vector>
 #include <cstdlib>
 #include <ctime>
+#include <windows.h>
 
 // Создать динамический массив вещественных чисел
 
 int main() {
-    setlocale(LC_ALL, "Russian");
+    SetConsoleCP(65001);
+    SetConsoleOutputCP(65001);
 
     int count = 10;
 

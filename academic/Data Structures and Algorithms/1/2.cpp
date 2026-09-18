@@ -1,4 +1,5 @@
 #include <iostream>
+#include <windows.h>
 
 //  2) Создать стек  вещественных чисел на основе статического массива. 
 // Реализовать методы : Добавить элемент, удалить элемент, вершина стека.
@@ -40,6 +41,9 @@ public:
 };
 
 int main() {
+    SetConsoleCP(65001);
+    SetConsoleOutputCP(65001);
+    
     Stack stack;
 
     stack.add(3.14);
@@ -47,5 +51,11 @@ int main() {
     stack.add(7.24);
 
     std::cout << stack.get_top() << "\n";
+
+    stack.pop();
+    stack.pop();
+
+    std::cout << stack.get_top() << "\n";
+
     return 0;
 }

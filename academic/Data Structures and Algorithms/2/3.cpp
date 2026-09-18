@@ -2,16 +2,18 @@
 #include <vector>
 #include <string>
 #include <algorithm>
+#include <windows.h>
 
 // Реализовать методы последовательного и бинарного поиска для массива записей следующей структуры: 
 // Фамилия, дата_рождения, адрес. Методы реализовать для поля Фамилия. 
 
 struct User {
     std::string last_name;
-    int age;
+    std::string date_birth;
+    std::string address;
 };
 
-// 1. Последовательный (линейный) поиск
+// Последовательный поиск
 int linear_search(const std::vector<User>& users, const std::string& target, int& steps) {
     steps = 0;
     
@@ -25,7 +27,7 @@ int linear_search(const std::vector<User>& users, const std::string& target, int
     return -1;
 }
 
-// 2. Бинарный поиск (работает только для отсортированного вектора!)
+// Бинарный поиск
 int binary_search(const std::vector<User>& users, const std::string& target, int& steps) {
     steps = 0;
     int low = 0;
@@ -48,13 +50,14 @@ int binary_search(const std::vector<User>& users, const std::string& target, int
 }
 
 int main() {
-    setlocale(LC_ALL, "Russian");
+    SetConsoleCP(65001);
+    SetConsoleOutputCP(65001);
 
     std::vector<User> users = {
-        {"Иванов", 25},
-        {"Петров", 30},
-        {"Сидоров", 19},
-        {"Алексеев", 40}
+        {"Иванов", "11.11.2006", "Нижневартовск"},
+        {"Петров", "17.05.2006", "Москва"},
+        {"Сидоров", "14.07.2006", "Стрежевой"},
+        {"Алексеев", "29.04.2006", "Нижневартовск"}
     };
 
     std::sort(users.begin(), users.end(), [](const User& a, const User& b) {

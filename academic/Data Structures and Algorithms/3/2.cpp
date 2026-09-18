@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <windows.h>
 
 //  Создать двусвязный список  для хранения  названий городов Ханты-Мансийского автономного округа. 
 // Реализовать методы: Добавить узел, удалить узел, просмотр списка слева 
@@ -121,7 +122,8 @@ public:
 };
 
 int main() {
-    setlocale(LC_ALL, "Russian");
+    SetConsoleCP(65001);
+    SetConsoleOutputCP(65001);
 
     DoublyLinkedList cities;
 

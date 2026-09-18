@@ -4,6 +4,7 @@
 #include <vector>
 #include <algorithm>
 #include <cctype>
+#include <windows.h>
 
 // Создать хеш-функцию для хранения записей в файл в сортированном виде.  
 // Хеш- функцию связать с кодами первых 2 символов Фамилии. 
@@ -24,7 +25,8 @@ static int hash(const std::string& last_name) {
 }
 
 int main() {
-    setlocale(LC_ALL, "Russian");
+    SetConsoleCP(65001);
+    SetConsoleOutputCP(65001);
 
     std::vector<Data> people = {
         {"Сидоров", "Алексей"},

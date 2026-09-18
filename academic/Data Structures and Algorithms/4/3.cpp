@@ -4,6 +4,7 @@
 #include <vector>
 #include <algorithm>
 #include <cctype>
+#include <windows.h>
 
 // Создать множество для хранения названий городов на основе 2 –направленного связного списка.
 // Реализовать операторы : Добавить элемент, удалить элемент, мощность множества, 
@@ -125,7 +126,8 @@ public:
 };
 
 int main() {
-    setlocale(LC_ALL, "Russian");
+    SetConsoleCP(65001);
+    SetConsoleOutputCP(65001);
 
     Set city_set;
 

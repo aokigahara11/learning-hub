@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <windows.h>
 
 // Создать односвязный список  для хранения Фамилии, Имени, Отчества в отдельных полях. 
 // Реализовать методы: Добавить узел, удалить узел, 
@@ -114,23 +115,21 @@ public:
 };
 
 int main() {
-    setlocale(LC_ALL, "Russian");
+    SetConsoleCP(65001);
+    SetConsoleOutputCP(65001);
 
     SinglyLinkedList users;
 
-    // Добавление элементов
     users.add({"Иванов", "Иван", "Иванович", "10.05.1995"});
     users.add({"Петров", "Петр", "Петрович", "15.08.1988"});
     users.add({"Сидоров", "Алексей", "Сергеевич", "01.01.2000"});
 
     users.print();
 
-    // Проверка принадлежности
     std::string search_name = "Петров";
     std::cout << "\nПроверка присутствия фамилии \"" << search_name << "\": "
               << (users.check(search_name) ? "Найден" : "Не найден") << "\n";
 
-    // Удаление элемента
     std::string remove_name = "Петров";
     std::cout << "\nУдаление пользователя с фамилией \"" << remove_name << "\"...\n";
     users.remove(remove_name);

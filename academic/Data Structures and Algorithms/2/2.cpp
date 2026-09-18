@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <windows.h>
 
 // Для сортированного массива В(1000) вещественных чисел реализовать методы последовательного и бинарного поиска. 
 // Определить количество шагов необходимых для поиска введенного с клавиатуры элементов первым и вторым методом.
@@ -45,7 +46,8 @@ int binary_search(const std::vector<float>& B, float target, int& steps) {
 }
 
 int main() {
-    setlocale(LC_ALL, "Russian");
+    SetConsoleCP(65001);
+    SetConsoleOutputCP(65001);
 
     std::vector<float> B(SIZE);
     for (int i = 0; i < SIZE; ++i) {

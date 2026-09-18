@@ -1,4 +1,5 @@
 #include <iostream>
+#include <windows.h>
 
 // 3) Создать простую очередь вещественных чисел на основе статического массива. 
 // Реализовать методы : Добавить элемент, удалить элемент, длина очереди.
@@ -47,13 +48,14 @@ public:
     }
 
     // Получить первый элемент
-    int get_first() {
+    float get_first() {
         return data[first];
     }
 };
 
 int main() {
-    setlocale(LC_ALL, "Russian");
+    SetConsoleCP(65001);
+    SetConsoleOutputCP(65001);
 
     Queue q;
 

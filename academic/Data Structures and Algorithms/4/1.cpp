@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <cstdio>
 #include <ctime>
+#include <windows.h>
 
 // Cохранить в файле Num.dat несколько целых чисел больших 100 таким образом, 
 // чтобы числа записались в сортированном виде. Для этого считать само число -100 
@@ -61,7 +62,8 @@ public:
 };
 
 int main() {
-    setlocale(LC_ALL, "Russian");
+    SetConsoleCP(65001);
+    SetConsoleOutputCP(65001);
 
     Utils utils;
     std::vector<int> numbers;

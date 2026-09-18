@@ -5,6 +5,7 @@
 #include <chrono>
 #include <algorithm>
 #include <cmath>
+#include <windows.h>
 
 // Сортировать массив целых чисел карманной сортировкой, быстрой сортировкой. 
 // Оценить реальное время на сортировку каждым из методов на текущем компьютере. 
@@ -80,7 +81,8 @@ void filling_array(std::vector<int>& array, int count, int max_num) {
 }
 
 int main() {
-    setlocale(LC_ALL, "Russian");
+    SetConsoleCP(65001);
+    SetConsoleOutputCP(65001);
 
     std::vector<int> array(COUNT_NUMBERS);
 

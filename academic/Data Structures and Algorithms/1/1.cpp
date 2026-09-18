@@ -3,6 +3,7 @@
 #include <string>
 #include <cstdint>
 #include <vector>
+#include <windows.h>
 
 // Создать запись Студент следующей структуры: ФИО, Дата_рождения – строки, курс, группа- байтовые числа. 
 // Написать программу, реализующую следующее меню: 
@@ -141,7 +142,8 @@ public:
 };
 
 int main() {
-    setlocale(LC_ALL, "Russian");
+    SetConsoleCP(65001);
+    SetConsoleOutputCP(65001);
 
     Students manager("students.txt");
     int choice = -1;
