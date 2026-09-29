@@ -62,3 +62,9 @@ dkms.conf
 *.sqlite3
 *.db-wal
 *.db-shm
+
+# json
+*.json
+
+# pth
+*.pth
