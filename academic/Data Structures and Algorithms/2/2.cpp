@@ -6,7 +6,7 @@
 // Для сортированного массива В(1000) вещественных чисел реализовать методы последовательного и бинарного поиска. 
 // Определить количество шагов необходимых для поиска введенного с клавиатуры элементов первым и вторым методом.
 
-const int SIZE = 1000;
+const int SIZE_ARR = 1000;
 
 // Последовательный поиск
 int linear_search(const std::vector<float>& B, float target, int& steps) {
@@ -49,8 +49,8 @@ int main() {
     SetConsoleCP(65001);
     SetConsoleOutputCP(65001);
 
-    std::vector<float> B(SIZE);
-    for (int i = 0; i < SIZE; ++i) {
+    std::vector<float> B(SIZE_ARR);
+    for (int i = 0; i < SIZE_ARR; ++i) {
         B[i] = (i + 1) * 1.5f;
     }
 
