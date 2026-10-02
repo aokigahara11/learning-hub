@@ -68,3 +68,10 @@ dkms.conf
 
 # pth
 *.pth
+
+# python
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+
