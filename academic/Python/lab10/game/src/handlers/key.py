@@ -35,14 +35,17 @@ class KeyHandler:
         """Наносит урон из текущего спелла по объекту HP."""
         spell = self.combo.current_spell
         if not spell:
+            hp.register_mistake()
             return
 
         spell_name = spell["name"]
 
         if self.spells.cast_spell(spell_name):
             damage = spell.get("damage", 0)
+            hp.register_spell_cast()
             hp.take_damage(damage)
             self.combo.reset_spell()
         else:
+            hp.register_mistake()
             rem = self.spells.get_remaining_cooldown(spell_name)
             print(f"Заклинание {spell_name} на перезарядке! (осталось {rem}с)")
