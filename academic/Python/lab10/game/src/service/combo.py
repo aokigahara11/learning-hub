@@ -1,5 +1,4 @@
 # game/src/service/combo.py
-
 from service.spells import SpellService
 
 class ComboEngine:
@@ -8,8 +7,9 @@ class ComboEngine:
         self.current_spell: dict | None = None
 
     def add_sphere(self, sphere: str):
-        """Добавляет сферу (Q, W, E) в очередь. 
-        Если уже есть 3 сферы, удаляет самую старую."""
+        """Добавляет сферу (Q, W, E) в очередь.
+        Если уже есть 3 сферы, удаляет самую старую.
+        """
         sphere = sphere.upper()
         if sphere in ("Q", "W", "E"):
             self.spheres.append(sphere)
@@ -24,7 +24,9 @@ class ComboEngine:
         combo_str = "".join(self.spheres)
         spell = SpellService.get_spell_by_combo(combo_str)
 
-        if spell:
-            self.current_spell = spell
-
+        self.current_spell = spell
         return self.current_spell
+
+    def reset_spell(self):
+        """Очищает заинвоканный спелл"""
+        self.current_spell = None

@@ -1,21 +1,21 @@
-# game/src/handlers/key_handler.py
+# game/src/handlers/key.py
 
 import pygame
 from service.combo import ComboEngine
+from service.spells import SpellService
+from service.hp import HP
+
 
 class KeyHandler:
 
-    def __init__(self, combo: ComboEngine):
+    def __init__(self, combo: ComboEngine, spells: SpellService):
         self.combo = combo
+        self.spells = spells
 
-    def handle_event(self, event: pygame.event.Event, enemy_hp: float) -> float:
-        """Обрабатывает события клавиш и мыши.
-        Returns:
-            float: Обновленное значение HP врага.
-        """
+    def handle_event(self, event: pygame.event.Event, hp: HP):
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button in (1, 3):
-                enemy_hp = self._cast_current_spell(enemy_hp)
+                self._cast_current_spell(hp)
 
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_q:
@@ -29,15 +29,20 @@ class KeyHandler:
                 self.combo.invoke()
 
             elif event.key in (pygame.K_d, pygame.K_f, pygame.K_SPACE):
-                enemy_hp = self._cast_current_spell(enemy_hp)
+                self._cast_current_spell(hp)
 
-        return enemy_hp
-
-    def _cast_current_spell(self, enemy_hp: float) -> float:
-        """Наносит урон из текущего спелла по врагу."""
+    def _cast_current_spell(self, hp: HP):
+        """Наносит урон из текущего спелла по объекту HP."""
         spell = self.combo.current_spell
         if not spell:
-            return enemy_hp
+            return
 
-        damage = spell.get("damage", 0)
-        return max(0.0, enemy_hp - damage)
+        spell_name = spell["name"]
+
+        if self.spells.cast_spell(spell_name):
+            damage = spell.get("damage", 0)
+            hp.take_damage(damage)
+            self.combo.reset_spell()
+        else:
+            rem = self.spells.get_remaining_cooldown(spell_name)
+            print(f"Заклинание {spell_name} на перезарядке! (осталось {rem}с)")

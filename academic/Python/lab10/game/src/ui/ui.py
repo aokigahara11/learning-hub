@@ -3,6 +3,7 @@
 import os
 import sys
 import pygame
+from service.spells import SpellService
 
 
 class UI:
@@ -24,9 +25,14 @@ class UI:
         self.COLOR_HP_FILL = (210, 45, 45)
         self.COLOR_HP_BG = (50, 20, 20)
 
+        self.COLOR_CD_BG = (35, 20, 28)
+        self.COLOR_CD_BORDER = (220, 60, 60)
+        self.COLOR_CD_TEXT = (255, 180, 70)
+
         self.font_main = pygame.font.SysFont("Arial", 16, bold=True)
         self.font_title = pygame.font.SysFont("Arial", 22, bold=True)
         self.font_small = pygame.font.SysFont("Arial", 12)
+        self.font_cd_badge = pygame.font.SysFont("Arial", 13, bold=True)
 
         self.base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
         self.assets_dir = os.path.join(self.base_dir, "assets")
@@ -39,7 +45,6 @@ class UI:
         self._load_spells()
 
     def _load_spheres(self):
-        """Загрузка и масштабирование сфер"""
         spheres_map = {
             "Q": "invoker_quas.webp",
             "W": "invoker_wex.webp",
@@ -50,18 +55,13 @@ class UI:
             path = os.path.join(self.assets_dir, "spheres", filename)
             if os.path.exists(path):
                 img = pygame.image.load(path).convert_alpha()
-                self.sphere_images[key] = pygame.transform.smoothscale(
-                    img, (56, 56)
-                )
-                self.sphere_images_small[key] = pygame.transform.smoothscale(
-                    img, (36, 36)
-                )
+                self.sphere_images[key] = pygame.transform.smoothscale(img, (56, 56))
+                self.sphere_images_small[key] = pygame.transform.smoothscale(img, (36, 36))
             else:
                 self.sphere_images[key] = None
                 self.sphere_images_small[key] = None
 
     def _load_spells(self):
-        """Маппинг имен заклинаний из БД на файлы"""
         spells_map = {
             "Alacrity": "invoker_alacrity.webp",
             "Chaos Meteor": "invoker_chaos_meteor.webp",
@@ -81,9 +81,7 @@ class UI:
             path = os.path.join(self.assets_dir, "spells", filename)
             if os.path.exists(path):
                 img = pygame.image.load(path).convert_alpha()
-                self.spell_images[name] = pygame.transform.smoothscale(
-                    img, (68, 68)
-                )
+                self.spell_images[name] = pygame.transform.smoothscale(img, (68, 68))
             else:
                 self.spell_images[name] = None
 
@@ -106,82 +104,102 @@ class UI:
         self.screen.blit(name_surf, name_rect)
 
         bg_rect = pygame.Rect(bar_x, bar_y, bar_width, bar_height)
-        pygame.draw.rect(
-            self.screen, self.COLOR_HP_BG, bg_rect, border_radius=6
-        )
+        pygame.draw.rect(self.screen, self.COLOR_HP_BG, bg_rect, border_radius=6)
 
         pct = max(0.0, min(1.0, current_hp / max_hp)) if max_hp > 0 else 0
         fill_width = int(bar_width * pct)
         if fill_width > 0:
             fill_rect = pygame.Rect(bar_x, bar_y, fill_width, bar_height)
-            pygame.draw.rect(
-                self.screen, self.COLOR_HP_FILL, fill_rect, border_radius=6
-            )
+            pygame.draw.rect(self.screen, self.COLOR_HP_FILL, fill_rect, border_radius=6)
 
-        pygame.draw.rect(
-            self.screen, self.COLOR_BORDER, bg_rect, width=2, border_radius=6
-        )
+        pygame.draw.rect(self.screen, self.COLOR_BORDER, bg_rect, width=2, border_radius=6)
 
         hp_str = f"{int(current_hp)} / {int(max_hp)}"
         hp_surf = self.font_main.render(hp_str, True, (255, 255, 255))
         hp_rect = hp_surf.get_rect(center=(center_x, bar_y + bar_height // 2))
         self.screen.blit(hp_surf, hp_rect)
 
-    def _draw_floating_spheres(self, active_spheres: list[str], hud_y: int, center_x: int):
-        """Отрисовывает 3 активные сферы над основной панелью интерфейса"""
-        if not active_spheres:
-            return
+    def _draw_top_info_panel(
+        self,
+        active_spheres: list[str],
+        hud_y: int,
+        center_x: int,
+        rem_cd: float,
+        spell_name: str | None,
+    ):
+        top_y = hud_y - 48
 
-        sphere_size = 36
-        spacing = 10
-        total_width = (
-            len(active_spheres) * sphere_size
-            + (len(active_spheres) - 1) * spacing
-        )
+        if active_spheres:
+            sphere_size = 36
+            spacing = 8
+            total_spheres_width = len(active_spheres) * sphere_size + (len(active_spheres) - 1) * spacing
+            start_x = center_x - total_spheres_width // 2
 
-        start_x = center_x - total_width // 2
-        top_y = hud_y - sphere_size - 12
+            for i, s_type in enumerate(active_spheres):
+                x = start_x + i * (sphere_size + spacing)
 
-        for i, s_type in enumerate(active_spheres):
-            x = start_x + i * (sphere_size + spacing)
+                pygame.draw.circle(
+                    self.screen,
+                    (20, 22, 32),
+                    (x + sphere_size // 2, top_y + sphere_size // 2),
+                    sphere_size // 2 + 2,
+                )
+                pygame.draw.circle(
+                    self.screen,
+                    self.COLOR_BORDER,
+                    (x + sphere_size // 2, top_y + sphere_size // 2),
+                    sphere_size // 2 + 2,
+                    width=1,
+                )
 
-            pygame.draw.circle(
-                self.screen,
-                (20, 22, 32),
-                (x + sphere_size // 2, top_y + sphere_size // 2),
-                sphere_size // 2 + 3,
-            )
-            pygame.draw.circle(
-                self.screen,
-                self.COLOR_BORDER,
-                (x + sphere_size // 2, top_y + sphere_size // 2),
-                sphere_size // 2 + 3,
-                width=1,
-            )
+                img = self.sphere_images_small.get(s_type)
+                if img:
+                    self.screen.blit(img, (x, top_y))
+                else:
+                    txt = self.font_small.render(s_type, True, (255, 255, 255))
+                    self.screen.blit(txt, (x + 12, top_y + 8))
 
-            img = self.sphere_images_small.get(s_type)
-            if img:
-                self.screen.blit(img, (x, top_y))
-            else:
-                txt = self.font_small.render(s_type, True, (255, 255, 255))
-                self.screen.blit(txt, (x + 12, top_y + 8))
+        if rem_cd > 0 and spell_name:
+            cd_sec = int(rem_cd) if rem_cd >= 1.0 else 1
+            badge_text = f"КД ({spell_name}): {cd_sec}с"
+            txt_surf = self.font_cd_badge.render(badge_text, True, self.COLOR_CD_TEXT)
 
-    def spells(self, active_spheres: list[str], current_spell: dict | None = None):
-        """Отрисовка нижнего HUD: фиксированные сферы Q/W/E и активный спелл."""
+            badge_w = txt_surf.get_width() + 24
+            badge_h = 30
+            badge_x = center_x + 60
+            badge_y = top_y + 3
+
+            badge_rect = pygame.Rect(badge_x, badge_y, badge_w, badge_h)
+
+            pygame.draw.rect(self.screen, self.COLOR_CD_BG, badge_rect, border_radius=8)
+            pygame.draw.rect(self.screen, self.COLOR_CD_BORDER, badge_rect, width=1, border_radius=8)
+
+            txt_rect = txt_surf.get_rect(center=badge_rect.center)
+            self.screen.blit(txt_surf, txt_rect)
+
+    def spells(
+        self,
+        active_spheres: list[str],
+        current_spell: dict | None = None,
+        spells_service: SpellService | None = None,
+    ):
         hud_height = 130
         hud_y = self.height - hud_height - 20
         center_x = self.width // 2
 
-        self._draw_floating_spheres(active_spheres, hud_y, center_x)
+        spell_name = current_spell.get("name") if current_spell else None
+        rem_cd = 0.0
+        if spell_name and spells_service:
+            rem_cd = spells_service.get_remaining_cooldown(spell_name)
+
+        self._draw_top_info_panel(active_spheres, hud_y, center_x, rem_cd, spell_name)
 
         hud_rect = pygame.Rect(center_x - 320, hud_y, 640, hud_height)
-        
+
         pygame.draw.rect(self.screen, self.COLOR_PANEL, hud_rect, border_radius=12)
         pygame.draw.rect(self.screen, self.COLOR_BORDER, hud_rect, width=2, border_radius=12)
 
-        spheres_title = self.font_small.render(
-            "СФЕРЫ (Q / W / E)", True, self.COLOR_TEXT_MUTED
-        )
+        spheres_title = self.font_small.render("СФЕРЫ (Q / W / E)", True, self.COLOR_TEXT_MUTED)
         self.screen.blit(spheres_title, (center_x - 280, hud_y + 12))
 
         fixed_spheres = ["Q", "W", "E"]
@@ -190,19 +208,14 @@ class UI:
             slot_y = hud_y + 38
             slot_rect = pygame.Rect(slot_x, slot_y, 56, 56)
 
-            # Пустой слот-рамка
-            pygame.draw.rect(
-                self.screen, (18, 20, 28), slot_rect, border_radius=8
-            )
+            pygame.draw.rect(self.screen, (18, 20, 28), slot_rect, border_radius=8)
 
             img = self.sphere_images.get(s_type)
             if img:
                 self.screen.blit(img, (slot_x, slot_y))
             else:
                 txt = self.font_main.render(s_type, True, (255, 255, 255))
-                self.screen.blit(
-                    txt, txt.get_rect(center=slot_rect.center)
-                )
+                self.screen.blit(txt, txt.get_rect(center=slot_rect.center))
 
             pygame.draw.rect(
                 self.screen,
@@ -219,13 +232,9 @@ class UI:
         slot_y = hud_y + 32
         spell_rect = pygame.Rect(slot_x, slot_y, 68, 68)
 
-        pygame.draw.rect(
-            self.screen, (18, 20, 28), spell_rect, border_radius=8
-        )
+        pygame.draw.rect(self.screen, (18, 20, 28), spell_rect, border_radius=8)
 
-        spell_name = current_spell.get("name") if current_spell else None
         img = self.spell_images.get(spell_name) if spell_name else None
-
         if not img:
             img = self.spell_images.get("empty")
 
@@ -244,27 +253,24 @@ class UI:
             display_name = current_spell.get("name", "")
             combo_str = f"[{current_spell.get('combo', '')}]"
 
-            name_surf = self.font_main.render(
-                display_name, True, (255, 215, 0)
-            )
-            combo_surf = self.font_small.render(
-                combo_str, True, self.COLOR_TEXT_MUTED
-            )
+            name_surf = self.font_main.render(display_name, True, (255, 215, 0))
+            combo_surf = self.font_small.render(combo_str, True, self.COLOR_TEXT_MUTED)
 
             self.screen.blit(name_surf, (slot_x + 80, slot_y + 10))
             self.screen.blit(combo_surf, (slot_x + 80, slot_y + 35))
         else:
-            none_surf = self.font_main.render(
-                "Нет заклинания", True, self.COLOR_TEXT_MUTED
-            )
+            none_surf = self.font_main.render("Нет заклинания", True, self.COLOR_TEXT_MUTED)
             self.screen.blit(none_surf, (slot_x + 80, slot_y + 22))
 
-    def render(self, enemy_hp: float, enemy_max_hp: float, active_spheres: list[str], current_spell: dict | None = None):
-        """Главный метод отрисовки кадра"""
+    def render(
+        self,
+        enemy_hp: float,
+        enemy_max_hp: float,
+        active_spheres: list[str],
+        current_spell: dict | None = None,
+        spells_service: SpellService | None = None,
+    ):
         self.screen.fill(self.COLOR_BG)
-
         self.draw_enemy_hp(enemy_hp, enemy_max_hp)
-
-        self.spells(active_spheres, current_spell)
-
+        self.spells(active_spheres, current_spell, spells_service)
         pygame.display.flip()
