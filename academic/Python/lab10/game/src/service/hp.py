@@ -1,6 +1,8 @@
 import random
 import time
 from pathlib import Path
+import torch
+from ml.generate_model import HPRegressionModel
 
 MAX_HP = 3000
 MIN_HP = 1600
@@ -43,9 +45,6 @@ class HP:
             return
 
         try:
-            import torch
-            from ml.generate_model import HPRegressionModel
-
             try:
                 checkpoint = torch.load(model_path, map_location="cpu", weights_only=True)
             except TypeError:
