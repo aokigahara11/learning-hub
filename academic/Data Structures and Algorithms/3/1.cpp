@@ -119,22 +119,75 @@ int main() {
     SetConsoleOutputCP(65001);
 
     SinglyLinkedList users;
+    int choice = 0;
 
     users.add({"Иванов", "Иван", "Иванович", "10.05.1995"});
     users.add({"Петров", "Петр", "Петрович", "15.08.1988"});
     users.add({"Сидоров", "Алексей", "Сергеевич", "01.01.2000"});
 
-    users.print();
+    while (true) {
+        std::cout << "1. Добавить запись\n";
+        std::cout << "2. Удалить запись по фамилии\n";
+        std::cout << "3. Просмотреть список\n";
+        std::cout << "4. Проверить наличие по фамилии\n";
+        std::cout << "0. Выход\n";
+        std::cout << "Выберите действие: ";
+        std::cin >> choice;
 
-    std::string search_name = "Петров";
-    std::cout << "\nПроверка присутствия фамилии \"" << search_name << "\": "
-              << (users.check(search_name) ? "Найден" : "Не найден") << "\n";
+        switch (choice) {
+            case 1: {
+                Data data;
+                std::cout << "Введите фамилию: ";
+                std::cin >> data.last_name;
+                std::cout << "Введите имя: ";
+                std::cin >> data.name;
+                std::cout << "Введите отчество: ";
+                std::cin >> data.patronymic;
+                std::cout << "Введите дату рождения: ";
+                std::cin >> data.date_birth;
 
-    std::string remove_name = "Петров";
-    std::cout << "\nУдаление пользователя с фамилией \"" << remove_name << "\"...\n";
-    users.remove(remove_name);
+                users.add(data);
+                std::cout << "Запись успешно добавлена!\n";
+                break;
+            }
+            case 2: {
+                std::string last_name;
+                std::cout << "Введите фамилию для удаления: ";
+                std::cin >> last_name;
 
-    users.print();
+                if (users.remove(last_name)) {
+                    std::cout << "Запись с фамилией \"" << last_name << "\" успешно удалена.\n";
+                } else {
+                    std::cout << "Запись с фамилией \"" << last_name << "\" не найдена.\n";
+                }
+                break;
+            }
+            case 3:
+                std::cout << "\n--- Список пользователей ---\n";
+                users.print();
+                break;
+
+            case 4: {
+                std::string last_name;
+                std::cout << "Введите фамилию для поиска: ";
+                std::cin >> last_name;
+
+                if (users.check(last_name)) {
+                    std::cout << "Пользователь с фамилией \"" << last_name << "\" присутствует в списке.\n";
+                } else {
+                    std::cout << "Пользователь с фамилией \"" << last_name << "\" не найден.\n";
+                }
+                break;
+            }
+            case 0:
+                std::cout << "Завершение работы программы.\n";
+                return 0;
+
+            default:
+                std::cout << "Неверный выбор! Попробуйте снова.\n";
+                break;
+        }
+    }
 
     return 0;
 }
