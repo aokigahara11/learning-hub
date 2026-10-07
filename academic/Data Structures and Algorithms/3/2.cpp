@@ -126,24 +126,76 @@ int main() {
     SetConsoleOutputCP(65001);
 
     DoublyLinkedList cities;
+    int choice = 0;
 
     cities.add("Ханты-Мансийск");
     cities.add("Сургут");
     cities.add("Нижневартовск");
     cities.add("Нефтеюганск");
 
-    cities.print(0);
-    cities.print(1);
+    while (true) {
+        std::cout << "1. Добавить город\n";
+        std::cout << "2. Удалить город\n";
+        std::cout << "3. Просмотреть список (слева направо)\n";
+        std::cout << "4. Просмотреть список (справа налево)\n";
+        std::cout << "5. Проверить наличие города в списке\n";
+        std::cout << "0. Выход\n";
+        std::cout << "Выберите действие: ";
+        std::cin >> choice;
 
-    std::string search_city = "Сургут";
-    std::cout << "\nПроверка присутствия города \"" << search_city << "\": "
-              << (cities.check(search_city) ? "Найден" : "Не найден") << "\n";
+        switch (choice) {
+            case 1: {
+                std::string city;
+                std::cout << "Введите название города: ";
+                std::cin >> city;
 
-    std::string remove_city = "Сургут";
-    std::cout << "\nУдаление города \"" << remove_city << "\"...\n";
-    cities.remove(remove_city);
+                cities.add(city);
+                std::cout << "Город \"" << city << "\" успешно добавлен!\n";
+                break;
+            }
+            case 2: {
+                std::string city;
+                std::cout << "Введите название города для удаления: ";
+                std::cin >> city;
 
-    cities.print(0);
+                if (cities.remove(city)) {
+                    std::cout << "Город \"" << city << "\" успешно удален.\n";
+                } else {
+                    std::cout << "Город \"" << city << "\" не найден в списке.\n";
+                }
+                break;
+            }
+            case 3:
+                std::cout << "\n";
+                cities.print(0);
+                break;
+
+            case 4:
+                std::cout << "\n";
+                cities.print(1);
+                break;
+
+            case 5: {
+                std::string city;
+                std::cout << "Введите название города для проверки: ";
+                std::cin >> city;
+
+                if (cities.check(city)) {
+                    std::cout << "Город \"" << city << "\" присутствует в списке.\n";
+                } else {
+                    std::cout << "Город \"" << city << "\" не найден в списке.\n";
+                }
+                break;
+            }
+            case 0:
+                std::cout << "Завершение работы программы.\n";
+                return 0;
+
+            default:
+                std::cout << "Неверный выбор! Попробуйте снова.\n";
+                break;
+        }
+    }
 
     return 0;
 }
