@@ -1,31 +1,39 @@
 import React from 'react'
 
-// Интерфейс структуры задачи
 export interface ITask {
-  id: number
-  title: string
-  isCompleted: boolean
+    id: number
+    title: string
+    isCompleted: boolean
 }
 
-// Props 
+// Props — это механизм передачи данных от родительского компонента к дочернему в React.
+// Props передаем как условные аргументы функции для его исполнения.
 interface TodoItemProps {
-  task: ITask
-  onToggle: (id: number) => void
-  onDelete: (id: number) => void
+    task: ITask
+    onToggle: (id: number) => void
+    onDelete: (id: number) => void
 }
 
 export const TodoItem: React.FC<TodoItemProps> = ({ task, onToggle, onDelete }) => {
-  return (
-    <li className={`todo-item ${task.isCompleted ? 'completed' : ''}`}>
-      {/* Клик по тексту переключает статус задачи через родительскую функцию */}
-      <span className="todo-item-text" onClick={() => onToggle(task.id)}>
-        {task.title}
-      </span>
+    // Классическое условие if/else вместо тернарного оператора
+    let itemClassName = 'todo-item'
+    if (task.isCompleted) {
+        itemClassName = 'todo-item completed'
+    }
 
-      {/* Клик по кнопке удаляет задачу по id */}
-      <button className="todo-delete-btn" onClick={() => onDelete(task.id)}>
-        ✕
-      </button>
-    </li>
-  )
+    return (
+        <li className={itemClassName}>
+            {/* Клик по тексту переключает статус */}
+            <span className="todo-item-text" onClick={() => onToggle(task.id)}>
+                {/* Вызываем переданную функцию через onToggle */}
+                {task.title}
+            </span>
+
+            {/* Клик удаляет задание */}
+            <button className="todo-delete-btn" onClick={() => onDelete(task.id)}>
+                {/* Вызываем переданную функцию через onDelete */}
+                ✕
+            </button>
+        </li>
+    )
 }
