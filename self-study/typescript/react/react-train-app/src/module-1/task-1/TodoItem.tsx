@@ -8,7 +8,7 @@ export interface ITask {
 
 // Props — это механизм передачи данных от родительского компонента к дочернему в React.
 // Props передаем как условные аргументы функции для его исполнения.
-interface TodoItemProps {
+export interface TodoItemProps {
     task: ITask
     onToggle: (id: number) => void
     onDelete: (id: number) => void
