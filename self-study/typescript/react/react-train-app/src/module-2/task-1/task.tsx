@@ -43,6 +43,9 @@ export const TodoList: React.FC = () => {
     const [isLoading, setIsLoading] = useState<boolean>(true)
     const [error, setError] = useState<string | null>(null)
 
+    // useEffect - это хук, который выполняет побочные действия (side effects) после того, 
+    // как React завершил отрисовку (рендеринг) компонента на экране.
+    
     // useEffect для загрузки компонентов сайтов
     useEffect(() => {
         const fetchTasks = async () => {
@@ -137,7 +140,7 @@ export const TodoList: React.FC = () => {
         return <div className="todo-container error">Ошибка: {error}</div>
     }
 
-    // Отрисовка фильтров через if/else
+    // Отрисовка фильтров
     let allFilterClass = 'filter-btn'
     if (filter === 'all') {
         allFilterClass = 'filter-btn active'
