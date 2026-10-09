@@ -1,20 +1,26 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { TodoItem, type ITask } from './TodoItem'
+import { useLocalStorage } from '../../module-3/task-1/useLocalStorage'
 
 export type FilterType = 'all' | 'active' | 'completed'
 
-// Состояние (State) — это специальный JavaScript-объект или значение, управляемое внутри компонента, 
-// которое хранит данные, меняющиеся во времени, и автоматически вызывает перерисовку (re-render) интерфейса при своём изменении.
-
 export const TodoList: React.FC = () => {
-    // Состояние списка всех задач
-    // useState([]) передаётся начальное значение
-    // ITask[] означает массив объектов формата ITask.
-    const [tasks, setTasks] = useState<ITask[]>([])
+    // 1. Заменяем обычный useState на кастомный хук useLocalStorage.
+    // Интерфейс идентичен, но данные теперь автоматически синхронизируются с localStorage.
+    const [tasks, setTasks] = useLocalStorage<ITask[]>('todo_tasks', [])
 
     const [inputText, setInputText] = useState('')
-
     const [filter, setFilter] = useState<FilterType>('all')
+
+    // 2. Создаем ссылку на DOM-элемент инпута
+    const inputRef = useRef<HTMLInputElement>(null)
+
+    // 3. Автофокус на инпут при монтировании компонента (первой загрузке страницы)
+    useEffect(() => {
+        if (inputRef.current !== null) {
+            inputRef.current.focus()
+        }
+    }, [])
 
     // Добавление новой задачи
     const handleAddTask = (e: React.FormEvent<HTMLFormElement>) => {
@@ -32,18 +38,19 @@ export const TodoList: React.FC = () => {
             isCompleted: false,
         }
 
-        setTasks([...tasks, newTask]) // tasks - хранилище, setTasks - функция-сеттер c помощью которой мы обновляем этот массив.
-        setInputText('') // Обнуляем ввод, после сохранения задания
+        setTasks([...tasks, newTask])
+        setInputText('')
+
+        // 4. Возвращаем фокус на поле ввода после добавления задачи
+        if (inputRef.current !== null) {
+            inputRef.current.focus()
+        }
     }
 
-    // Переключение статуса задачи (isCompleted: true / false)
+    // Переключение статуса задачи
     const handleToggleTask = (id: number) => {
-        // Используем иммутабельность — создаем абсолютно новый массив и отдаем его в setTasks.
         const updatedTasks = tasks.map((task) => {
             if (task.id === id) {
-                // { ...task } — оператор spread скопировал все свойства текущей задачи (id, title, isCompleted).
-                // isCompleted: !task.isCompleted — перетирает поле isCompleted на противоположное значение 
-                // (!true станет false, а !false станет true).
                 return {
                     ...task,
                     isCompleted: !task.isCompleted,
@@ -58,7 +65,7 @@ export const TodoList: React.FC = () => {
 
     // Удаление задачи из массива по ID
     const handleDeleteTask = (id: number) => {
-        setTasks(tasks.filter((task) => task.id !== id)) // Удаление путем .filter()
+        setTasks(tasks.filter((task) => task.id !== id))
     }
 
     // Фильтрация задач
@@ -72,7 +79,7 @@ export const TodoList: React.FC = () => {
         return true
     })
 
-    // Определение классов для фильтра через if/else
+    // Определение классов для фильтра
     let allFilterClass = 'filter-btn'
     if (filter === 'all') {
         allFilterClass = 'filter-btn active'
@@ -109,6 +116,7 @@ export const TodoList: React.FC = () => {
 
             <form className="todo-form" onSubmit={handleAddTask}>
                 <input
+                    ref={inputRef} // Привязываем ссылку к инпуту
                     type="text"
                     className="todo-input"
                     placeholder="Что нужно сделать?"
