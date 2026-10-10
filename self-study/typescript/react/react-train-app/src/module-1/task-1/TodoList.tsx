@@ -2,8 +2,6 @@ import React, { useState, useRef, useEffect } from 'react'
 import { TodoItem } from './TodoItem'
 import { useTodo } from '../../module-5/task-1/TodoContext'
 
-export type FilterType = 'all' | 'active' | 'completed'
-
 export const TodoList: React.FC = () => {
     const { state, filteredTasks, addTask, toggleTask, deleteTask, setFilter } = useTodo()
     const [inputText, setInputText] = useState('')

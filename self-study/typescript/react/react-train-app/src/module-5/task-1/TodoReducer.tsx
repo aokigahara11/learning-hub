@@ -1,15 +1,4 @@
-import { type ITask } from '../../module-1/task-1/TodoItem'
-import { type FilterType } from '../../module-1/task-1/TodoList'
-
-export interface TodoState {
-    tasks: ITask[]
-    filter: FilterType
-}
-
-export type TodoActions = | { type: 'ADD_TASK'; payload: string }
-    | { type: 'TOGGLE_TASK'; payload: number }
-    | { type: 'DELETE_TASK'; payload: number }
-    | { type: 'SET_FILTER'; payload: FilterType }
+import type { ITask, TodoActions, TodoState } from '../../types/todo'
 
 export function todoReducer(state: TodoState, action: TodoActions) {
     if (action.type === 'ADD_TASK') {

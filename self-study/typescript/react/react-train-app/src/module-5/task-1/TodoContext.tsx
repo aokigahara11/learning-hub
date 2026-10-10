@@ -1,8 +1,7 @@
 import React, { createContext, useContext, useReducer, useEffect } from 'react'
-import { todoReducer, type TodoState } from './TodoReducer'
+import { todoReducer } from './todoReducer'
 import { useLocalStorage } from '../../module-3/task-1/useLocalStorage'
-import { type ITask } from '../../module-1/task-1/TodoItem'
-import { type FilterType } from '../../module-1/task-1/TodoList'
+import type { FilterType, ITask, TodoState } from '../../types/todo'
 
 // Описываем, что будет доступно через контекст
 interface TodoContextType {

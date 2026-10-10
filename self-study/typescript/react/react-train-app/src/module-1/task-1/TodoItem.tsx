@@ -1,10 +1,6 @@
 import React from 'react'
+import type { ITask } from '../../types/todo'
 
-export interface ITask {
-    id: number
-    title: string
-    isCompleted: boolean
-}
 
 // Props — это механизм передачи данных от родительского компонента к дочернему в React.
 // Props передаем как условные аргументы функции для его исполнения.
