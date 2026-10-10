@@ -14,8 +14,8 @@ export interface TodoItemProps {
     onDelete: (id: number) => void
 }
 
-export const TodoItem: React.FC<TodoItemProps> = ({ task, onToggle, onDelete }) => {
-    // Классическое условие if/else вместо тернарного оператора
+// Оборачиваем весь компонент в React.memo снаружи
+export const TodoItem: React.FC<TodoItemProps> = React.memo(({ task, onToggle, onDelete }) => {
     let itemClassName = 'todo-item'
     if (task.isCompleted) {
         itemClassName = 'todo-item completed'
@@ -36,4 +36,4 @@ export const TodoItem: React.FC<TodoItemProps> = ({ task, onToggle, onDelete }) 
             </button>
         </li>
     )
-}
+})

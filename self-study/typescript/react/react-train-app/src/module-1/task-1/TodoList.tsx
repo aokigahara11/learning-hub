@@ -1,37 +1,29 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import { TodoItem, type ITask } from './TodoItem'
 import { useLocalStorage } from '../../module-3/task-1/useLocalStorage'
 
 export type FilterType = 'all' | 'active' | 'completed'
 
 export const TodoList: React.FC = () => {
-    // 1. Заменяем обычный useState на кастомный хук useLocalStorage.
-    // Интерфейс идентичен, но данные теперь автоматически синхронизируются с localStorage.
     const [tasks, setTasks] = useLocalStorage<ITask[]>('todo_tasks', [])
-
     const [inputText, setInputText] = useState('')
     const [filter, setFilter] = useState<FilterType>('all')
 
-    // 2. Создаем ссылку на DOM-элемент инпута
     const inputRef = useRef<HTMLInputElement>(null)
 
-    // 3. Автофокус на инпут при монтировании компонента (первой загрузке страницы)
     useEffect(() => {
         if (inputRef.current !== null) {
             inputRef.current.focus()
         }
     }, [])
 
-    // Добавление новой задачи
     const handleAddTask = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
 
-        // Проверка на пустоту
         if (!inputText.trim()) {
             return
         }
 
-        // Создание новой задачи
         const newTask: ITask = {
             id: Date.now(),
             title: inputText.trim(),
@@ -41,45 +33,46 @@ export const TodoList: React.FC = () => {
         setTasks([...tasks, newTask])
         setInputText('')
 
-        // 4. Возвращаем фокус на поле ввода после добавления задачи
         if (inputRef.current !== null) {
             inputRef.current.focus()
         }
     }
 
-    // Переключение статуса задачи
-    const handleToggleTask = (id: number) => {
-        const updatedTasks = tasks.map((task) => {
-            if (task.id === id) {
-                return {
-                    ...task,
-                    isCompleted: !task.isCompleted,
+    // Оптимизируем обработчики с помощью useCallback и функционального обновления состояния
+    const handleToggleTask = useCallback((id: number) => {
+        setTasks((prevTasks) => {
+            return prevTasks.map((task) => {
+                if (task.id === id) {
+                    return {
+                        ...task,
+                        isCompleted: !task.isCompleted,
+                    }
+                } else {
+                    return task
                 }
-            } else {
-                return task
-            }
+            })
         })
+    }, [setTasks])
 
-        setTasks(updatedTasks)
-    }
+    const handleDeleteTask = useCallback((id: number) => {
+        setTasks((prevTasks) => {
+            return prevTasks.filter((task) => task.id !== id)
+        })
+    }, [setTasks])
 
-    // Удаление задачи из массива по ID
-    const handleDeleteTask = (id: number) => {
-        setTasks(tasks.filter((task) => task.id !== id))
-    }
+    // Мемоизация фильтрации задач через useMemo
+    const filteredTasks = useMemo(() => {
+        return tasks.filter((task) => {
+            if (filter === 'active') {
+                return !task.isCompleted
+            }
+            if (filter === 'completed') {
+                return task.isCompleted
+            }
+            return true
+        })
+    }, [tasks, filter])
 
-    // Фильтрация задач
-    const filteredTasks = tasks.filter((task) => {
-        if (filter === 'active') {
-            return !task.isCompleted
-        }
-        if (filter === 'completed') {
-            return task.isCompleted
-        }
-        return true
-    })
-
-    // Определение классов для фильтра
     let allFilterClass = 'filter-btn'
     if (filter === 'all') {
         allFilterClass = 'filter-btn active'
@@ -95,7 +88,6 @@ export const TodoList: React.FC = () => {
         completedFilterClass = 'filter-btn active'
     }
 
-    // Отрисовка пустого списка или задач через if/else
     let listContent: React.ReactNode
     if (filteredTasks.length === 0) {
         listContent = <li className="todo-empty">Задач нет</li>
@@ -116,7 +108,7 @@ export const TodoList: React.FC = () => {
 
             <form className="todo-form" onSubmit={handleAddTask}>
                 <input
-                    ref={inputRef} // Привязываем ссылку к инпуту
+                    ref={inputRef}
                     type="text"
                     className="todo-input"
                     placeholder="Что нужно сделать?"
