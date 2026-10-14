@@ -78,3 +78,21 @@ dkms.conf
 *.pyd
 __pycache__/
 
+# binary
+*.exe
+*.out
+*.app
+*.o
+*.obj
+
+# build
+/build/
+/bin/
+/obj/
+*.lib
+*.a
+*.ilk
+*.pdb
+
+# .txt
+*.txt
