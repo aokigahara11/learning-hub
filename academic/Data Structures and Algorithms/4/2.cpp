@@ -25,17 +25,13 @@ static int hash(const std::string& last_name) {
 }
 
 int main() {
-    SetConsoleCP(65001);
-    SetConsoleOutputCP(65001);
-
     std::vector<Data> people = {
-        {"Сидоров", "Алексей"},
-        {"Иванов", "Иван"},
-        {"Абрамов", "Павел"},
-        {"Игнатьев", "Сергей"},
-        {"Антонов", "Денис"}
+        {"Sidorov", "Alexey"},
+        {"Ivanov", "Ivan"},
+        {"Abramov", "Pavel"},
+        {"Ignatiev", "Sergey"},
+        {"Antonov", "Denis"}
     };
-
 
     for (auto& person : people) {
         person.hash_code = hash(person.last_name);
@@ -50,7 +46,7 @@ int main() {
 
     std::ofstream out_file("sorted_people.txt");
     if (!out_file.is_open()) {
-        std::cerr << "Ошибка при открытии файла для записи!" << std::endl;
+        std::cerr << "Error opening file for writing!" << std::endl;
         return 1;
     }
 
@@ -61,7 +57,7 @@ int main() {
     }
 
     out_file.close();
-    std::cout << "\nДанные успешно сохранены в файл sorted_people.txt!" << std::endl;
+    std::cout << "\nData successfully saved to sorted_people.txt!" << std::endl;
 
     return 0;
 }
