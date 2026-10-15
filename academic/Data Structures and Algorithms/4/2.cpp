@@ -17,11 +17,11 @@ struct Data {
 };
 
 // Хеш-функция
-static int hash(const std::string& last_name) {
+static int get_hash(const std::string& last_name) {
     unsigned char char1 = std::toupper(static_cast<unsigned char>(last_name[0]));
     unsigned char char2 = std::toupper(static_cast<unsigned char>(last_name[1]));
 
-    return (static_cast<int>(char1) * 256) + static_cast<int>(char2);
+    return static_cast<int>(char1) + static_cast<int>(char2);
 }
 
 int main() {
@@ -34,7 +34,7 @@ int main() {
     };
 
     for (auto& person : people) {
-        person.hash_code = hash(person.last_name);
+        person.hash_code = get_hash(person.last_name);
     }
 
     std::sort(people.begin(), people.end(), [](const Data& a, const Data& b) {
