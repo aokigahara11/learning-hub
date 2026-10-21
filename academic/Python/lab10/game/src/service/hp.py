@@ -2,7 +2,7 @@ import random
 import time
 from pathlib import Path
 import torch
-from ml.generate_model import HPRegressionModel
+from ml.train import HPRegressionModel
 
 MAX_HP = 3000
 MIN_HP = 1600
