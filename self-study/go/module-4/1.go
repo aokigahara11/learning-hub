@@ -4,8 +4,7 @@ import (
 	"fmt"
 )
 
-
-/* 
+/*
 
 Создай структуру User с полями:
 
@@ -36,7 +35,7 @@ type User struct {
 }
 
 func (user *User) TopUp(amount float64) {
-	user.Balance += amount 
+	user.Balance += amount
 }
 
 func (user User) GetInfo() {
@@ -56,3 +55,4 @@ func main() {
 	for _, user := range users {
 		user.GetInfo()
 	}
+}
